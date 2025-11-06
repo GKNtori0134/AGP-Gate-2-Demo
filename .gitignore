@@ -1,0 +1,44 @@
+# ========== Unity 常用忽略项 ==========
+[Ll]ibrary/
+[Tt]emp/
+[Oo]bj/
+[Bb]uild*/
+[Ll]ogs/
+[Uu]serSettings/
+[Mm]emoryCaptures/
+[Tt]exture2DCache/
+Recordings/
+
+# ========== OS/IDE 文件 ==========
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.csproj
+*.sln
+*.suo
+*.user
+*.unityproj
+
+# ========== Unity Cloud/Cache ==========
+sysinfo.txt
+*.pidb
+*.booproj
+*.svd
+
+# ========== 版本控制特殊 ==========
+# 如果你用 Git LFS，这些文件会单独 track
+*.psd
+*.png
+*.jpg
+*.tga
+*.fbx
+*.wav
+*.mp3
+*.mp4
+*.mov
+*.exr
+*.tif
+*.dll
+*.a
+*.bundle
