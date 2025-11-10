@@ -1,0 +1,15 @@
+Correct display of demo scene
+
+Before opening the demo scene, increase Maximum Shadows to 300.
+-Edit > ProjectSettings > Quality > HDRP > Lighting > Shadows > Maximum Shadows on Screen
+
+---------------------------------------------------------------
+
+Please set the occlusion culling to display the demo scene correctly.
+
+-Bake OcclusionCulling
+--Windows>Rendering>OcclusionCulling
+
+-Camera setting
+--Scene View Camera > OcclusionCulling  (the camera icon in the upper right corner of the viewport)
+--Main Camera > OcclusionCulling
