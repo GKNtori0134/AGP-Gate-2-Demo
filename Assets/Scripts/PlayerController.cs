@@ -3,18 +3,21 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour
 {
     public float moveSpeed = 5f;
+    public float runSpeed = 9f;            
+    public float jumpForce = 5f;
     public float mouseSensitivity = 2f;
 
     private Rigidbody rb;
     private Camera playerCamera;
     private float rotationX = 0f;
+    private bool isGrounded = true;
 
     void Start()
     {
         rb = GetComponent<Rigidbody>();
         playerCamera = GetComponentInChildren<Camera>();
 
-        // 锁定鼠标光标，使其不可见并固定在屏幕中心
+        // Lock the cursor and make it invisible
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
     }
@@ -23,18 +26,21 @@ public class PlayerController : MonoBehaviour
     {
         HandleMovement();
         HandleMouseLook();
+        HandleJump();   
     }
 
     void HandleMovement()
     {
-        float moveX = Input.GetAxis("Horizontal");  // A, D 左右移动
-        float moveZ = Input.GetAxis("Vertical");    // W, S 前后移动
+        float moveX = Input.GetAxis("Horizontal");  // A, D move left and right
+        float moveZ = Input.GetAxis("Vertical");    // W, S move forward and backward
 
-        // 计算移动方向
+        float currentSpeed = Input.GetKey(KeyCode.LeftShift) ? runSpeed : moveSpeed;
+
+        // Move the player in the direction of the input
         Vector3 moveDirection = transform.right * moveX + transform.forward * moveZ;
         moveDirection *= moveSpeed;
 
-        // 让 Rigidbody 处理物理移动
+        // Move the player using the Rigidbody
         rb.velocity = new Vector3(moveDirection.x, rb.velocity.y, moveDirection.z);
     }
 
@@ -43,12 +49,30 @@ public class PlayerController : MonoBehaviour
         float mouseX = Input.GetAxis("Mouse X") * mouseSensitivity;
         float mouseY = Input.GetAxis("Mouse Y") * mouseSensitivity;
 
-        // 旋转玩家水平视角
+        // Rotate the player horizontally
         transform.Rotate(Vector3.up * mouseX);
 
-        // 旋转摄像机垂直视角
+        // Rotate the player vertically
         rotationX -= mouseY;
-        rotationX = Mathf.Clamp(rotationX, -90f, 90f); // 限制上下视角范围
+        rotationX = Mathf.Clamp(rotationX, -90f, 90f); // Clamp the vertical rotation to the camera's field of view
         playerCamera.transform.localRotation = Quaternion.Euler(rotationX, 0, 0);
     }
+
+    void HandleJump()
+    {
+        if (Input.GetKeyDown(KeyCode.Space) && isGrounded)
+        {
+            rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
+            isGrounded = false;
+        }
+    }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.CompareTag("Ground"))
+        {
+            isGrounded = true;
+        }
+    }
+
 }
