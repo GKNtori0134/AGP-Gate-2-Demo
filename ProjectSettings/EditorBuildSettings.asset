@@ -6,6 +6,6 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/PolygonFantasyKingdom/Scenes/Demo_01.unity
+    path: Assets/Packages/PolygonFantasyKingdom/Scenes/Demo_01.unity
     guid: 23d8661265deed742959416ea58475f7
   m_configObjects: {}
