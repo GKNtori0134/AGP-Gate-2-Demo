@@ -1,9 +1,9 @@
-ï»¿using UnityEngine;
+using UnityEngine;
 
 public class ArrowController : MonoBehaviour
 {
     private Rigidbody rb;
-    private bool hasHit = false; // æ˜¯å¦å·²ç»å‘½ä¸­
+    private bool hasHit = false; // ÊÇ·ñÒÑ¾­ÃüÖĞ
     public float bounceForce = 5f;
     public float bounceMultiplier = 1f;
     public int bounceTimes = 2;
@@ -13,10 +13,6 @@ public class ArrowController : MonoBehaviour
     public AudioClip colli;
     public AudioClip hitting;
 
-    // ğŸ’¥ ä¸‰ç§ä¸åŒçš„å¼¹è·³ç‰¹æ•ˆ
-    [Header("Bounce VFX Prefabs (from first to last bounce)")]
-    public GameObject[] bounceVFXPrefabs; // 0 = first bounce, 1 = second bounce, 2 = third bounce
-
     void Start()
     {
         rb = GetComponent<Rigidbody>();
@@ -25,8 +21,8 @@ public class ArrowController : MonoBehaviour
 
     void Update()
     {
-        // è®©ç®­çŸ¢çš„æ–¹å‘å§‹ç»ˆç­‰äºå…¶é€Ÿåº¦æ–¹å‘
-        if (!hasHit && rb.velocity.sqrMagnitude > 0.01f)
+        // ÈÃ¼ıÊ¸µÄ·½ÏòÊ¼ÖÕµÈÓÚÆäËÙ¶È·½Ïò
+        if (!hasHit && rb.velocity.sqrMagnitude > 0.01f) // Ö»ÓĞÔÚ¼ıÊ¸Î´ÃüÖĞÇÒËÙ¶È²»Îª0Ê±µ÷Õû·½Ïò
         {
             transform.forward = rb.velocity.normalized;
         }
@@ -34,10 +30,17 @@ public class ArrowController : MonoBehaviour
 
     void OnCollisionEnter(Collision collision)
     {
-        // å‘½ä¸­æŒ‰é’®çš„ç‰¹æ®Šé€»è¾‘
+        /*if (!hasHit)
+        {
+            hasHit = true;
+            rb.velocity = Vector3.zero; // Í£Ö¹¼ıÊ¸ÔË¶¯
+            rb.isKinematic = true; // ÈÃ¼ıÊ¸¹Ì¶¨²»¶¯
+            transform.parent = collision.transform; // ÈÃ¼ı¸½×ÅÔÚÃüÖĞµÄÎïÌåÉÏ
+        }*/
+
         if (collision.collider.CompareTag("Button") && bounceTimes == collision.collider.GetComponent<ButtonTrigger>().bounceTimes)
         {
-            collision.collider.GetComponent<ButtonTrigger>().triggerTarget();
+            collision.collider.GetComponent<ButtonTrigger>().triggerTarget(); 
             hasHit = true;
             GetComponent<AudioSource>().clip = hitting;
             GetComponent<AudioSource>().Play();
@@ -45,63 +48,36 @@ public class ArrowController : MonoBehaviour
             return;
         }
 
-        // æ™®é€šåå¼¹é€»è¾‘
         if (bounceTimes > 0 && !hasHit)
         {
-            TrailerSource.changeColor(bounceTimes - 1);
 
-            // è·å–ç¢°æ’ç‚¹æ³•çº¿æ–¹å‘
+            TrailerSource.changeColor(bounceTimes-1);
+
+            // »ñÈ¡Åö×²µã·¨Ïß·½Ïò
             Vector3 normal = collision.contacts[0].normal;
 
-            // è®¡ç®—åå°„æ–¹å‘
+            // ¼ÆËã·´Éä·½Ïò
             Vector3 bounceDirection = Vector3.Reflect(rb.velocity, normal);
 
-            // æ–½åŠ åå¼¹åŠ›ï¼Œå¢åŠ å‘ä¸Šçš„åç§»
+            // Ê©¼Ó·´µ¯Á¦£¬Ôö¼ÓÏòÉÏµÄÆ«ÒÆ
             bounceDirection += Vector3.up * bounceForce;
 
-            // åº”ç”¨æ–°çš„é€Ÿåº¦
+            // Ó¦ÓÃĞÂµÄËÙ¶È
             rb.velocity = bounceDirection * bounceMultiplier;
 
-            // æ’­æ”¾éŸ³æ•ˆ
+            bounceTimes--;
+
             GetComponent<AudioSource>().clip = colli;
             GetComponent<AudioSource>().time = 0.2f;
             GetComponent<AudioSource>().Play();
 
-            // ğŸ’¥ æ’­æ”¾å¯¹åº”è¯¥å¼¹æ¬¡æ•°çš„ç‰¹æ•ˆ
-            int vfxIndex = Mathf.Clamp(bounceTimes - 1, 0, bounceVFXPrefabs.Length - 1);
-            SpawnBounceVFX(collision.contacts[0].point, normal, vfxIndex);
-
-            bounceTimes--;
-        }
-        else
+        } else
         {
-            // æœ€åä¸€æ¬¡ç¢°æ’
+            //CapsuleCollider.enabled = false;
             rb.isKinematic = true;
             GetComponent<AudioSource>().clip = colli;
             GetComponent<AudioSource>().time = 0.2f;
             GetComponent<AudioSource>().Play();
-
-            // ğŸ’¥ æœ€åä¸€å‡»çš„å°ç‰¹æ•ˆ
-            SpawnBounceVFX(collision.contacts[0].point, collision.contacts[0].normal, bounceVFXPrefabs.Length - 1);
-        }
-    }
-
-    // ğŸ’¨ ç”Ÿæˆç‰¹å®šå¼¹è·³ç‰¹æ•ˆ
-    void SpawnBounceVFX(Vector3 position, Vector3 normal, int index)
-    {
-        if (bounceVFXPrefabs != null && index >= 0 && index < bounceVFXPrefabs.Length && bounceVFXPrefabs[index] != null)
-        {
-            GameObject vfx = Instantiate(bounceVFXPrefabs[index], position, Quaternion.LookRotation(normal));
-
-            ParticleSystem ps = vfx.GetComponent<ParticleSystem>();
-            if (ps != null)
-            {
-                Destroy(vfx, ps.main.duration + ps.main.startLifetime.constantMax);
-            }
-            else
-            {
-                Destroy(vfx, 2f);
-            }
         }
     }
 }
