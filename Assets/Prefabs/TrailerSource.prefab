@@ -250,10 +250,6 @@ MonoBehaviour:
   TrailerSource: {fileID: 2564553209505156449}
   colli: {fileID: 8300000, guid: fdc008f55ddd46b4e8cc20ec3569d46d, type: 3}
   hitting: {fileID: 8300000, guid: 1c58fc10992c80745a747948e7db6252, type: 3}
-  bounceVFXPrefabs:
-  - {fileID: 416251089823111746, guid: 240c830bfe588ad4f9925288b65d7a18, type: 3}
-  - {fileID: 7258936774047215834, guid: 0ab20d89b262f8240999628a1403ecc8, type: 3}
-  - {fileID: 6678588679366763109, guid: 09c387cf0bd54034daad364798d579b4, type: 3}
 --- !u!54 &6465967054043511572
 Rigidbody:
   m_ObjectHideFlags: 0
